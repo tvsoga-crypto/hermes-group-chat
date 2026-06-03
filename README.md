@@ -4,6 +4,8 @@ A multi-user web chatroom for team collaboration with **Hermes Agent** as the AI
 
 > Chat with your AI assistant together with your team, in real-time, from any device on your LAN.
 
+![Chat Demo](screenshots/chat-demo.jpg)
+
 ## ✨ Features
 
 - 👥 **Multi-user** — separate accounts, real-time messaging
