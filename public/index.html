@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-  <title>__('AI漫畫對話')</title>
+  <title data-i18n="AI漫畫對話">AI漫畫對話</title>
   <!--APP_VERSION-->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎨</text></svg>">
   <link rel="manifest" href="/manifest.json">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="__('AI漫畫')">
+  <meta name="apple-mobile-web-app-title" content="AI漫畫">
   <style>
     :root {
       color-scheme: dark;
@@ -668,14 +668,14 @@
     setBodyClass('auth-page');
     app.innerHTML = `
     <main class="auth-box">
-      <h1>🎨 __('AI漫畫對話')</h1>
-      <p>__('首次安裝 — 建立管理員帳號')</p>
+      <h1>🎨 ${__('AI漫畫對話')}</h1>
+      <p>${__('首次安裝 — 建立管理員帳號')}</p>
       ${error ? `<div class="error">${esc(error)}</div>` : ''}
       <form id="setupForm">
-        <label>__('帳號') <input name="username" autocomplete="username" required></label>
-        <label>__('顯示名稱') <input name="display_name" required></label>
-        <label>__('密碼') <input name="password" type="password" autocomplete="new-password" minlength="8" required></label>
-        <button type="submit">__('建立管理員')</button>
+        <label>${__('帳號')} <input name="username" autocomplete="username" required></label>
+        <label>${__('顯示名稱')} <input name="display_name" required></label>
+        <label>${__('密碼')} <input name="password" type="password" autocomplete="new-password" minlength="8" required></label>
+        <button type="submit">${__('建立管理員')}</button>
       </form>
     </main>`;
     document.getElementById('setupForm').onsubmit = async (e) => {
@@ -695,13 +695,13 @@
     setBodyClass('auth-page');
     app.innerHTML = `
     <main class="auth-box">
-      <h1>🎨 __('AI漫畫對話')</h1>
-      <p>__('登入後以自己的身份加入 AI 群組對話')</p>
+      <h1>🎨 ${__('AI漫畫對話')}</h1>
+      <p>${__('登入後以自己的身份加入 AI 群組對話')}</p>
       ${error ? `<div class="error">${esc(error)}</div>` : ''}
       <form id="loginForm">
-        <label>__('帳號') <input name="username" autocomplete="username" required></label>
-        <label>__('密碼') <input name="password" type="password" autocomplete="current-password" required></label>
-        <button type="submit">__('登入')</button>
+        <label>${__('帳號')} <input name="username" autocomplete="username" required></label>
+        <label>${__('密碼')} <input name="password" type="password" autocomplete="current-password" required></label>
+        <button type="submit">${__('登入')}</button>
       </form>
     </main>`;
     document.getElementById('loginForm').onsubmit = async (e) => {
@@ -729,11 +729,11 @@
     const isAdmin = state.user?.role === 'admin';
     app.innerHTML = `
     <header class="topbar">
-      <div class="room-avatar">__('🐍')</div>
+      <div class="room-avatar">🐍</div>
       <div class="room-info">
         <div class="room-selector" id="roomSelector">
           <div class="current" id="roomCurrent">
-            <span id="roomName">🎨 __('AI漫畫對話')</span>
+            <span id="roomName">🎨 ${__('AI漫畫對話')}</span>
             <span class="arrow">▼</span>
           </div>
           <div class="menu" id="roomMenu"></div>
@@ -742,38 +742,38 @@
         <div class="version-badge" id="versionBadge"></div>
       </div>
       <nav>
-        <button class="icon-btn" id="btnSearch" aria-label="${__(\'搜尋訊息\')}" title="${__(\'搜尋訊息\')}">🔍</button>
-        <button class="icon-btn" id="btnOnlineUsers" aria-label="${__(\'線上用戶\')}" title="${__(\'線上用戶\')}">
+        <button class="icon-btn" id="btnSearch" aria-label="${__('搜尋')}" title="${__('搜尋')}">🔍</button>
+        <button class="icon-btn" id="btnOnlineUsers" aria-label="${__('在線')}" title="${__('在線')}">
           👤
           <span class="online-badge" id="onlineBadge"></span>
           <span class="online-count" id="onlineCount">0</span>
         </button>
-        ${isAdmin ? '<a href="#" id="btnAdmin" class="auth-link">__('後台')</a>' : ''}
-        <a href="#" id="btnProfile" class="auth-link">__('設定')</a>
-        <a href="#" id="btnLogout" class="auth-link">__('登出')</a>
+        ${isAdmin ? '<a href="#" id="btnAdmin" class="auth-link">' + __('後台管理') + '</a>' : ''}
+        <a href="#" id="btnProfile" class="auth-link">${__('設定')}</a>
+        <a href="#" id="btnLogout" class="auth-link">${__('登出')}</a>
       </nav>
     </header>
     <main id="messages" class="messages">
-      <div class="empty">__('載入中...')</div>
+      <div class="empty">${__('載入中...')}</div>
     </main>
     <div id="typingArea" class="hidden typing-indicator">
       <div class="typing-dots"><span></span><span></span><span></span></div>
-      __('海馬正在輸入...')
+      ${__('正在輸入...')}
     </div>
     <div id="replyPreview" class="reply-preview hidden">
-      <span class="rp-label">__('回覆')</span>
+      <span class="rp-label">${__('回覆')}</span>
       <span class="rp-text" id="replyPreviewText"></span>
       <button class="rp-cancel" id="replyCancel">✕</button>
     </div>
     <div class="composer-area">
       <form id="composer" class="composer">
-        <button type="button" class="composer-btn" id="btnUpload" aria-label="${__(\'上傳檔案\')}">📎</button>
-        <textarea id="msgInput" rows="1" placeholder="${__(\'輸入訊息... (Enter 送出)\')}" required></textarea>
-        <button type="submit" class="send-btn" aria-label="${__(\'送出\')}">➤</button>
+        <button type="button" class="composer-btn" id="btnUpload" aria-label="${__('上傳')}">📎</button>
+        <textarea id="msgInput" rows="1" placeholder="${__('輸入訊息...')} (Enter)" required></textarea>
+        <button type="submit" class="send-btn" aria-label="${__('發送')}">➤</button>
         <input type="file" id="fileInput" class="file-input" accept="image/*,video/*">
       </form>
     </div>
-    <button id="scrollToBottomBtn" class="scroll-bottom-btn" aria-label="${__(\'跳到最新\')}">↓</button>
+    <button id="scrollToBottomBtn" class="scroll-bottom-btn" aria-label="${__('最新')}">↓</button>
     <div class="context-menu" id="contextMenu"></div>
     <div class="online-popup" id="onlinePopup"></div>`;
 
@@ -804,7 +804,7 @@
     // ─── Reply preview bar ───
     function showReplyPreview(msg) {
       state.replyToMessage = msg;
-      replyPreviewText.textContent = (msg.displayName || ${__('訪客')}) + ': ' + (msg.content || (msg.stickerUrl || '') || (msg.fileUrl ? ${__('[檔案]')} : ''));
+      replyPreviewText.textContent = (msg.displayName || __('訪客')) + ': ' + (msg.content || (msg.stickerUrl || '') || (msg.fileUrl ? __('[檔案]') : ''));
       replyPreview.classList.remove('hidden');
       input.focus();
     }
@@ -870,7 +870,7 @@
       } else if (action === 'edit') {
         startInlineEdit(msgId);
       } else if (action === 'delete') {
-        if (confirm(${__('確定要刪除此訊息？')})) {
+        if (confirm(__('確定刪除此訊息？'))) {
           deleteMessage(msgId);
         }
       }
@@ -900,8 +900,8 @@
       const originalText = msg.content || '';
       contentDiv.innerHTML = `<div class="edit-mode">
         <input type="text" id="editInput" value="${esc(originalText)}">
-        <button class="edit-save" id="editSave">__('儲存')</button>
-        <button class="edit-cancel" id="editCancel">__('取消')</button>
+        <button class="edit-save" id="editSave">${__('儲存')}</button>
+        <button class="edit-cancel" id="editCancel">${__('取消')}</button>
       </div>`;
 
       const editInput = document.getElementById('editInput');
@@ -921,11 +921,11 @@
             await loadCurrentRoomMessages();
           } else {
             contentDiv.innerHTML = originalHtml;
-            alert(__('編輯失敗') + ': ' + (res.error || 'unknown'));
+            alert(__('錯誤：') + (res.error || 'unknown'));
           }
         } catch (err) {
           contentDiv.innerHTML = originalHtml;
-          alert(${__('編輯失敗')});
+          alert(__('失敗'));
         }
       };
 
@@ -953,10 +953,10 @@
         if (res.ok) {
           await loadCurrentRoomMessages();
         } else {
-          alert(__('刪除失敗') + ': ' + (res.error || 'unknown'));
+          alert(__('錯誤：') + (res.error || 'unknown'));
         }
       } catch (err) {
-        alert(${__('刪除失敗')});
+        alert(__('失敗'));
       }
     }
 
@@ -1094,21 +1094,21 @@
       const { prepend = false, maintainScroll = false } = options;
 
       if (state.messages.length === 0) {
-        msgsEl.innerHTML = '<div class="empty">${__('還沒有訊息，來打聲招呼吧！👋')}</div><div id="scrollSentinel" style="height:55px;margin:0;"></div>';
+        msgsEl.innerHTML = '<div class="empty">' + __('還沒有訊息，來打聲招呼吧！👋') + '</div><div id="scrollSentinel" style="height:55px;margin:0;"></div>';
         return;
       }
 
       let prevScrollHeight = msgsEl.scrollHeight;
 
       const topHtml = state.hasMore
-        ? `<div id="loadMoreTrigger" style="text-align:center;padding:8px;color:var(--muted);font-size:13px;">${state.loadingMore ? __('載入中...') : '⬆ ' + __('載入更早的訊息')}</div>`
+        ? `<div id="loadMoreTrigger" style="text-align:center;padding:8px;color:var(--muted);font-size:13px;">${state.loadingMore ? __('載入中...') : '⬆ ' + __('載入更多')}</div>`
         : '';
 
       const html = topHtml + state.messages.map(m => {
         const isAi = m.role === 'assistant';
         const isMine = m.displayName === state.user?.displayName && m.role === 'user';
         const klass = isAi ? 'ai' : (isMine ? 'mine' : 'theirs');
-        const name = isAi ? ${__('🐍 海馬')} : (m.displayName || ${__('訪客')});
+        const name = isAi ? '🐍 海馬' : (m.displayName || __('訪客'));
         const hasReasoning = m.reasoning && m.reasoning.length > 0;
         const isSticker = m.sticker_url && m.sticker_url.length > 0;
         const isDeleted = m.deleted === true || m.deleted === 1;
@@ -1118,15 +1118,15 @@
         const mediaHtml = m.fileUrl ? (
           m.fileType === 'video'
             ? `<video controls style="max-width:100%;max-height:400px;border-radius:8px;margin:4px 0;" src="${esc(m.fileUrl)}"></video>`
-            : `<img loading="lazy" style="max-width:100%;max-height:400px;border-radius:8px;margin:4px 0;cursor:pointer;" src="${esc(m.fileUrl)}" onclick="window.open(this.src)" alt="${__(\'圖片\')}">`
+            : `<img loading="lazy" style="max-width:100%;max-height:400px;border-radius:8px;margin:4px 0;cursor:pointer;" src="${esc(m.fileUrl)}" onclick="window.open(this.src)" alt="${__('圖片')}">`
         ) : '';
 
         // Reply quote
         let replyHtml = '';
         if (m.reply_to_id) {
           const repliedMsg = state.messages.find(r => r.id === m.reply_to_id);
-          const replyName = repliedMsg ? (repliedMsg.displayName || ${__('訪客')}) : ${__('未知')};
-          const replyText = repliedMsg ? (repliedMsg.content || (repliedMsg.sticker_url || '') || (repliedMsg.fileUrl ? ${__('[檔案]')} : '')) : ${__('[已刪除]')};
+          const replyName = repliedMsg ? (repliedMsg.displayName || __('訪客')) : __('無');
+          const replyText = repliedMsg ? (repliedMsg.content || (repliedMsg.sticker_url || '') || (repliedMsg.fileUrl ? __('[檔案]') : '')) : __('已刪除');
           replyHtml = `<div class="reply-quote" data-reply-to-id="${m.reply_to_id}">
             <span class="rq-name">${esc(replyName)}</span>
             <span class="rq-text">${esc(replyText)}</span>
@@ -1136,7 +1136,7 @@
         // Content
         let contentHtml = '';
         if (isDeleted) {
-          contentHtml = '<div class="deleted-msg">${__('此訊息已刪除')}</div>';
+          contentHtml = '<div class="deleted-msg">' + __('此訊息已刪除') + '</div>';
         } else if (isSticker) {
           contentHtml = `<div class="sticker-msg">${esc(m.sticker_url)}</div>`;
         } else if (m.content) {
@@ -1145,7 +1145,7 @@
         }
 
         // Edited label
-        const editedHtml = isEdited ? '<span class="edited-label">${__('(已編輯)')}</span>' : '';
+        const editedHtml = isEdited ? '<span class="edited-label">' + __('已編輯') + '</span>' : '';
 
         // Reactions
         let reactionsHtml = '';
@@ -1173,7 +1173,7 @@
         if (rr && rr.length > 0) {
           const names = rr.map(r => r.displayName || r.display_name).filter(n => n !== state.user?.displayName);
           if (names.length > 0) {
-            readHtml = `<div class="read-receipts"><span class="rr-eye">👁</span><span class="rr-names">${__('已讀:')} ${esc(names.join(', '))}</span></div>`;
+            readHtml = `<div class="read-receipts"><span class="rr-eye">👁</span><span class="rr-names">${__('已讀: ')}${esc(names.join(', '))}</span></div>`;
           }
         }
 
@@ -1184,7 +1184,7 @@
             ${replyHtml}
             ${mediaHtml}
             ${contentHtml}
-            ${hasReasoning ? `<div class="reasoning-toggle" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='block'?'none':'block'">${__('💭 查看思考過程')}</div>
+            ${hasReasoning ? `<div class="reasoning-toggle" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='block'?'none':'block'">💭 ${__('查看思考過程')}</div>
             <div class="reasoning-content">${esc(m.reasoning)}</div>` : ''}
             ${reactionsHtml}
             ${readHtml}
@@ -1487,7 +1487,7 @@
             : `<img style="max-width:100%;max-height:100%;object-fit:contain;border-radius:8px;" src="${url}" alt="preview">`}
         </div>
         <div style="display:flex;gap:10px;padding:10px 12px 12px;background:#111;flex-shrink:0;align-items:center;">
-          <input id="captionInput" type="text" placeholder="${__(\'添加說明...\')}" style="flex:1;padding:10px 14px;border:1px solid #333;border-radius:20px;background:#222;color:#fff;font-size:15px;outline:none;">
+          <input id="captionInput" type="text" placeholder="${__('添加說明')}..." style="flex:1;padding:10px 14px;border:1px solid #333;border-radius:20px;background:#222;color:#fff;font-size:15px;outline:none;">
           <button type="button" id="sendWithCaption" style="width:44px;height:44px;padding:0;border:none;border-radius:50%;background:#07c160;color:#fff;font-size:18px;cursor:pointer;display:grid;place-items:center;">➤</button>
         </div>
       `;
@@ -1548,7 +1548,7 @@
       const popup = document.getElementById('onlinePopup');
       if (!popup) return;
       const users = state.onlineUsers;
-      popup.innerHTML = `<div class="op-title">${__('線上人數:')} ${users.length}</div>` +
+      popup.innerHTML = `<div class="op-title">${__('線上人數: ')}${users.length}</div>` +
         users.map(u => `<div class="op-user"><span class="op-dot"></span><span class="op-name">${esc(u.displayName || u.display_name || u.username)}</span></div>`).join('');
     }
 
@@ -1572,11 +1572,11 @@
       overlay.className = 'search-overlay';
       overlay.innerHTML = `
         <div class="search-header">
-          <input type="text" id="searchInput" placeholder="${__(\'搜尋訊息...\')}" autofocus>
+          <input type="text" id="searchInput" placeholder="${__('搜尋訊息...')}" autofocus>
           <button class="close-search" id="closeSearch">✕</button>
         </div>
         <div class="search-results" id="searchResults">
-          <div class="search-empty">__('輸入關鍵字開始搜尋')</div>
+          <div class="search-empty">${__('輸入關鍵字開始搜尋')}</div>
         </div>
       `;
       document.body.appendChild(overlay);
@@ -1609,18 +1609,18 @@
       const searchResults = document.getElementById('searchResults');
       if (!searchResults) return;
       if (!query) {
-        searchResults.innerHTML = '<div class="search-empty">${__('輸入關鍵字開始搜尋')}</div>';
+        searchResults.innerHTML = '<div class="search-empty">' + __('輸入關鍵字開始搜尋') + '</div>';
         return;
       }
 
-      searchResults.innerHTML = '<div class="search-empty">${__('搜尋中...')}</div>';
+      searchResults.innerHTML = '<div class="search-empty">' + __('搜尋中...') + '</div>';
       try {
         const res = await api(`/api/messages/search?q=${encodeURIComponent(query)}&room_id=${state.currentRoomId}`);
         if (res.ok) {
           if (res.messages && res.messages.length > 0) {
             searchResults.innerHTML = res.messages.map(m => {
-              const name = m.display_name || m.displayName || ${__('訪客')};
-              const text = m.content || (m.sticker_url || '') || ${__('[檔案]')};
+              const name = m.display_name || m.displayName || __('訪客');
+              const text = m.content || (m.sticker_url || '') || __('[檔案]');
               return `<div class="search-result-item" data-id="${m.id}">
                 <span class="sr-name">${esc(name)}</span>
                 <span class="sr-text">${esc(text.length > 100 ? text.slice(0, 100) + '...' : text)}</span>
@@ -1637,13 +1637,13 @@
               };
             });
           } else {
-            searchResults.innerHTML = '<div class="search-empty">${__('沒有找到相關訊息')}</div>';
+            searchResults.innerHTML = '<div class="search-empty">' + __('沒有找到相關訊息') + '</div>';
           }
         } else {
-          searchResults.innerHTML = '<div class="search-empty">${__('搜尋失敗')}</div>';
+          searchResults.innerHTML = '<div class="search-empty">' + __('搜尋失敗') + '</div>';
         }
       } catch (err) {
-        searchResults.innerHTML = '<div class="search-empty">${__('搜尋失敗')}</div>';
+        searchResults.innerHTML = '<div class="search-empty">' + __('搜尋失敗') + '</div>';
       }
     }
 
@@ -1677,7 +1677,7 @@
       roomMenu.innerHTML = state.rooms.map(r => `
         <div class="menu-item${r.id === curId ? ' active' : ''}" data-room-id="${r.id}">
           <div class="name">${esc(r.name)}</div>
-          <div class="desc">${esc(r.description || __('無描述'))}</div>
+          <div class="desc">${esc(r.description || __('無'))}</div>
         </div>
       `).join('');
       roomMenu.querySelectorAll('.menu-item').forEach(el => {
@@ -1726,9 +1726,9 @@
       const avatarEl = document.querySelector('.room-avatar');
       if (!avatarEl) return;
       if (room && room.avatar_url) {
-        avatarEl.innerHTML = `<img src="${esc(room.avatar_url)}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;" alt="${__(\'頭像\')}">`;
+        avatarEl.innerHTML = `<img src="${esc(room.avatar_url)}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;" alt="${__('頭像')}">`;
       } else {
-        avatarEl.innerHTML = ${__('🐍')};
+        avatarEl.innerHTML = '🐍';
       }
     }
 
@@ -1777,7 +1777,7 @@
         <div class="user-row" data-id="${u.id}">
           <div>
             <strong>${esc(u.display_name)}</strong>
-            <span>${esc(u.username)} · ${esc(u.role)} · ${u.active ? __('✅ 啟用') : __('⛔ 停用')}</span>
+            <span>${esc(u.username)} · ${esc(u.role)} · ${u.active ? '✅ ' + __('啟用') : '⛔ ' + __('停用')}</span>
           </div>
           <div class="actions">
             <button class="btn-edit" data-id="${u.id}" data-username="${esc(u.username)}" data-displayname="${esc(u.display_name)}">${__('編輯')}</button>
@@ -1791,10 +1791,10 @@
       <main class="admin-shell">
         <header class="admin-head">
           <div>
-            <h1>⚙️ __('後台管理')</h1>
-            <p>__(__('建立帳號密碼，交給要加入聊天室的人'))</p>
+            <h1>⚙️ ${__('後台管理')}</h1>
+            <p>${__('建立帳號密碼，交給要加入聊天室的人')}</p>
           </div>
-          <a href="#" id="backToChat" style="padding:6px 12px;border:1px solid var(--line);border-radius:var(--radius-sm);color:var(--muted);font-size:13px;">__('← 回聊天室')</a>
+          <a href="#" id="backToChat" style="padding:6px 12px;border:1px solid var(--line);border-radius:var(--radius-sm);color:var(--muted);font-size:13px;">← ${__('回聊天室')}</a>
         </header>
         ${error ? `<div class="error">${esc(error)}</div>` : ''}
         ${notice ? `<div class="notice">${esc(notice)}</div>` : ''}
@@ -1805,24 +1805,24 @@
           <span>${__('密碼：')}${esc(generated.password)}</span>
         </section>` : ''}
         <section class="panel">
-          <h2>__('新增帳號')</h2>
+          <h2>${__('新增帳號')}</h2>
           <form id="createUserForm" class="inline-form">
-            <label>__('帳號') <input name="username" required></label>
-            <label>__('顯示名稱') <input name="display_name" required></label>
-            <label>__('密碼') <input name="password" required></label>
-            <button type="submit">__('建立帳號')</button>
+            <label>${__('帳號')} <input name="username" required></label>
+            <label>${__('顯示名稱')} <input name="display_name" required></label>
+            <label>${__('密碼')} <input name="password" required></label>
+            <button type="submit">${__('建立帳號')}</button>
           </form>
         </section>
         <section class="panel">
-          <h2>__('帳號列表') (${users.length})</h2>
+          <h2>${__('帳號列表')} (${users.length})</h2>
           <div class="user-list">${rows}</div>
         </section>
         <section class="panel">
-          <h2>🧩 __('聊天室管理')</h2>
+          <h2>🧩 ${__('聊天室管理')}</h2>
           <form id="createRoomForm" class="inline-form" style="margin-bottom:16px;">
-            <label>__('名稱') <input name="name" placeholder="${__(\'例如：漫畫討論\')}" required></label>
-            <label>__('說明') <input name="description" placeholder="${__(\'簡短描述這個聊天室的主題\')}"></label>
-            <button type="submit">__('新增聊天室')</button>
+            <label>${__('名稱')} <input name="name" placeholder="${__('例如：漫畫討論')}" required></label>
+            <label>${__('說明')} <input name="description" placeholder="${__('簡短描述這個聊天室的主題')}"></label>
+            <button type="submit">${__('新增聊天室')}</button>
           </form>
           <div id="roomAdminList" class="user-list"></div>
         </section>
@@ -1871,17 +1871,17 @@
         if (!list) return;
         const rooms = rres.ok ? rres.rooms : [];
         list.innerHTML = rooms.map(r => {
-          const themeNames = { default: ${__('深色')}, ocean: ${__('海洋')}, forest: ${__('森林')}, sunset: ${__('日落')}, light: ${__('淺色')}, midnight: ${__('午夜')} };
+          const themeNames = { default: __('深色'), ocean: __('海洋'), forest: __('森林'), sunset: __('日落'), light: __('淺色'), midnight: __('午夜') };
           const tname = themeNames[r.theme] || r.theme;
           return `
           <div class="user-row">
             <div>
               <strong>${esc(r.name)}</strong>
-              <span>${esc(r.description || __('無說明'))}${r.is_default ? ' · __('⭐ 預設')' : ''} · 🎨 ${tname}</span>
+              <span>${esc(r.description || __('無說明'))}${r.is_default ? ' · ⭐ ' + __('預設') : ''} · 🎨 ${tname}</span>
             </div>
             <div class="actions">
-              <button class="btn-edit-room" data-id="${r.id}" data-name="${esc(r.name)}" data-desc="${esc(r.description || '')}" data-theme="${r.theme || 'default'}">__('編輯')</button>
-              <button class="btn-avatar-room" data-id="${r.id}">__('頭像')</button>
+              <button class="btn-edit-room" data-id="${r.id}" data-name="${esc(r.name)}" data-desc="${esc(r.description || '')}" data-theme="${r.theme || 'default'}">${__('編輯')}</button>
+              <button class="btn-avatar-room" data-id="${r.id}">${__('頭像')}</button>
             </div>
           </div>`;
         }).join('');
@@ -1909,10 +1909,10 @@
                   body: fd,
                 });
                 const data = await res.json();
-                if (data.ok) render.admin(null, ${__('✅ 頭像已更新')});
-                else render.admin(null, '', data.error || ${__('上傳失敗')});
+                if (data.ok) render.admin(null, __('✅ 頭像已更新'));
+                else render.admin(null, '', data.error || __('上傳失敗'));
               } catch {
-                render.admin(null, '', ${__('上傳失敗')});
+                render.admin(null, '', __('上傳失敗'));
               }
             };
             input.click();
@@ -1928,7 +1928,7 @@
           method: 'POST',
           body: JSON.stringify(data),
         });
-        if (res.ok) render.admin(null, ${__('✅ 聊天室已建立')});
+        if (res.ok) render.admin(null, __('✅ 聊天室已建立'));
         else render.admin(null, '', res.error);
       };
     });
@@ -1943,25 +1943,25 @@
     overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);display:grid;place-items:center;z-index:1000;padding:20px;';
     overlay.innerHTML = `
       <div style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:28px;width:min(400px,100%);">
-        <h3 style="margin:0 0 4px;">__('⚙️ 個人設定')</h3>
-        <p style="margin:0 0 20px;font-size:13px;color:var(--muted);">__('修改你的帳號、暱稱或密碼')</p>
+        <h3 style="margin:0 0 4px;">⚙️ ${__('個人設定')}</h3>
+        <p style="margin:0 0 20px;font-size:13px;color:var(--muted);">${__('修改你的帳號、暱稱或密碼')}</p>
         <form id="profileForm">
           <label style="display:block;margin-bottom:12px;font-size:13px;color:var(--muted);">
-            __('帳號')
+            ${__('帳號')}
             <input name="username" value="${esc(user.username)}" required style="display:block;width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface2);color:var(--ink);outline:none;">
           </label>
           <label style="display:block;margin-bottom:12px;font-size:13px;color:var(--muted);">
-            __(__('顯示名稱（暱稱）'))
+            ${__('顯示名稱（暱稱）')}
             <input name="display_name" value="${esc(user.displayName)}" required style="display:block;width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface2);color:var(--ink);outline:none;">
           </label>
           <label style="display:block;margin-bottom:20px;font-size:13px;color:var(--muted);">
-            __('新密碼（留空不修改）')
-            <input name="password" type="password" placeholder="${__(\'留空則不變\')}" style="display:block;width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface2);color:var(--ink);outline:none;">
+            ${__('新密碼（留空不修改）')}
+            <input name="password" type="password" placeholder="${__('留空則不變')}" style="display:block;width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface2);color:var(--ink);outline:none;">
           </label>
           <div id="profileMsg" style="margin-bottom:12px;font-size:13px;display:none;"></div>
           <div style="display:flex;gap:8px;justify-content:flex-end;">
-            <button type="button" id="cancelProfile" style="padding:8px 16px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;">__('取消')</button>
-            <button type="submit" style="padding:8px 16px;border:none;border-radius:8px;background:var(--brand);color:#fff;font-weight:600;cursor:pointer;">__('儲存')</button>
+            <button type="button" id="cancelProfile" style="padding:8px 16px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;">${__('取消')}</button>
+            <button type="submit" style="padding:8px 16px;border:none;border-radius:8px;background:var(--brand);color:#fff;font-weight:600;cursor:pointer;">${__('儲存')}</button>
           </div>
         </form>
       </div>
@@ -1989,12 +1989,12 @@
         state.user.displayName = data.display_name;
         msgEl.style.display = 'block';
         msgEl.style.color = 'var(--success)';
-        msgEl.textContent = ${__('✅ 已更新！請重新登入套用變更。')};
+        msgEl.textContent = __('✅ 已更新！請重新登入套用變更。');
         setTimeout(() => { overlay.remove(); location.reload(); }, 1500);
       } else {
         msgEl.style.display = 'block';
         msgEl.style.color = 'var(--danger)';
-        msgEl.textContent = '❌ ' + (res.error || ${__('更新失敗')});
+        msgEl.textContent = '❌ ' + (res.error || __('更新失敗'));
       }
     };
   }
@@ -2005,23 +2005,23 @@
     overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);display:grid;place-items:center;z-index:1000;padding:20px;';
     overlay.innerHTML = `
       <div style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:28px;width:min(400px,100%);">
-        <h3 style="margin:0 0 16px;">__('編輯帳號')</h3>
+        <h3 style="margin:0 0 16px;">${__('編輯帳號')}</h3>
         <form id="editForm">
           <label style="display:block;margin-bottom:12px;font-size:13px;color:var(--muted);">
-            __('帳號')
+            ${__('帳號')}
             <input name="username" value="${esc(username)}" required style="display:block;width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface2);color:var(--ink);outline:none;">
           </label>
           <label style="display:block;margin-bottom:12px;font-size:13px;color:var(--muted);">
-            __('顯示名稱')
+            ${__('顯示名稱')}
             <input name="display_name" value="${esc(displayName)}" required style="display:block;width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface2);color:var(--ink);outline:none;">
           </label>
           <label style="display:block;margin-bottom:20px;font-size:13px;color:var(--muted);">
-            __('新密碼（留空不修改）')
-            <input name="password" type="password" placeholder="${__(\'留空則不變\')}" style="display:block;width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface2);color:var(--ink);outline:none;">
+            ${__('新密碼（留空不修改）')}
+            <input name="password" type="password" placeholder="${__('留空則不變')}" style="display:block;width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface2);color:var(--ink);outline:none;">
           </label>
           <div style="display:flex;gap:8px;justify-content:flex-end;">
-            <button type="button" id="cancelEdit" style="padding:8px 16px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;">__('取消')</button>
-            <button type="submit" style="padding:8px 16px;border:none;border-radius:8px;background:var(--brand);color:#fff;font-weight:600;cursor:pointer;">__('儲存')</button>
+            <button type="button" id="cancelEdit" style="padding:8px 16px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;">${__('取消')}</button>
+            <button type="submit" style="padding:8px 16px;border:none;border-radius:8px;background:var(--brand);color:#fff;font-weight:600;cursor:pointer;">${__('儲存')}</button>
           </div>
         </form>
       </div>
@@ -2040,7 +2040,7 @@
         body: JSON.stringify(data),
       });
       overlay.remove();
-      if (res.ok) render.admin(null, data.password ? ${__('✅ 帳號資訊已更新')} : ${__('✅ 帳號資訊已更新')});
+      if (res.ok) render.admin(null, data.password ? __('✅ 帳號資訊已更新') : __('✅ 帳號資訊已更新'));
       else render.admin(null, '', res.error);
     };
   }
@@ -2048,12 +2048,12 @@
   // ── Room edit modal (admin) ──
   function showRoomEditModal(id, name, description, currentTheme) {
     const themes = [
-      { id: 'default', label: ${__('🌑 深色')}, desc: ${__('預設 GitHub 暗色')} },
-      { id: 'ocean', label: ${__('🌊 海洋')}, desc: ${__('藍色系深海風格')} },
-      { id: 'forest', label: ${__('🌲 森林')}, desc: ${__('綠色系自然風格')} },
-      { id: 'sunset', label: ${__('🌅 日落')}, desc: ${__('暖色系橘紅風格')} },
-      { id: 'light', label: ${__('☀️ 淺色')}, desc: ${__('白天明亮模式')} },
-      { id: 'midnight', label: ${__('🌙 午夜')}, desc: ${__('紫色系暗色風格')} },
+      { id: 'default', label: '🌑 ' + __('深色'), desc: __('預設 GitHub 暗色') },
+      { id: 'ocean', label: '🌊 ' + __('海洋'), desc: __('藍色系深海風格') },
+      { id: 'forest', label: '🌲 ' + __('森林'), desc: __('綠色系自然風格') },
+      { id: 'sunset', label: '🌅 ' + __('日落'), desc: __('暖色系橘紅風格') },
+      { id: 'light', label: '☀️ ' + __('淺色'), desc: __('白天明亮模式') },
+      { id: 'midnight', label: '🌙 ' + __('午夜'), desc: __('紫色系暗色風格') },
     ];
     const themeOptions = themes.map(t =>
       `<option value="${t.id}"${t.id === currentTheme ? ' selected' : ''}>${t.label}</option>`
@@ -2063,26 +2063,26 @@
     overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);display:grid;place-items:center;z-index:1000;padding:20px;';
     overlay.innerHTML = `
       <div style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:28px;width:min(400px,100%);">
-        <h3 style="margin:0 0 16px;">__('✏️ 編輯聊天室')</h3>
+        <h3 style="margin:0 0 16px;">✏️ ${__('編輯聊天室')}</h3>
         <form id="editRoomForm">
           <label style="display:block;margin-bottom:12px;font-size:13px;color:var(--muted);">
-            __('名稱')
+            ${__('名稱')}
             <input name="name" value="${esc(name)}" required style="display:block;width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface2);color:var(--ink);outline:none;">
           </label>
           <label style="display:block;margin-bottom:12px;font-size:13px;color:var(--muted);">
-            __('說明')
+            ${__('說明')}
             <input name="description" value="${esc(description)}" style="display:block;width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface2);color:var(--ink);outline:none;">
           </label>
           <label style="display:block;margin-bottom:12px;font-size:13px;color:var(--muted);">
-            __('主題配色')
+            ${__('主題配色')}
             <select name="theme" style="display:block;width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface2);color:var(--ink);outline:none;">
               ${themeOptions}
             </select>
           </label>
           <div id="editRoomMsg" style="margin-bottom:12px;font-size:13px;display:none;"></div>
           <div style="display:flex;gap:8px;justify-content:flex-end;">
-            <button type="button" id="cancelEditRoom" style="padding:8px 16px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;">__('取消')</button>
-            <button type="submit" style="padding:8px 16px;border:none;border-radius:8px;background:var(--brand);color:#fff;font-weight:600;cursor:pointer;">__('儲存')</button>
+            <button type="button" id="cancelEditRoom" style="padding:8px 16px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;">${__('取消')}</button>
+            <button type="submit" style="padding:8px 16px;border:none;border-radius:8px;background:var(--brand);color:#fff;font-weight:600;cursor:pointer;">${__('儲存')}</button>
           </div>
         </form>
       </div>
@@ -2101,11 +2101,11 @@
       });
       if (res.ok) {
         overlay.remove();
-        render.admin(null, ${__('✅ 聊天室已更新')});
+        render.admin(null, __('✅ 聊天室已更新'));
       } else {
         msgEl.style.display = 'block';
         msgEl.style.color = 'var(--danger)';
-        msgEl.textContent = '❌ ' + (res.error || ${__('更新失敗')});
+        msgEl.textContent = '❌ ' + (res.error || __('更新失敗'));
       }
     };
   }
@@ -2130,10 +2130,6 @@
   }
 
   async function init() {
-    // ─── Set page title from i18n ───
-    document.title = __('AI漫畫對話');
-    document.querySelector('meta[name="apple-mobile-web-app-title"]')?.setAttribute('content', __('AI漫畫'));
-
     const res = await api('/api/check-setup');
     if (res.needsSetup) return render.setup();
 
