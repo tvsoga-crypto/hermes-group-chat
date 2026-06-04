@@ -152,17 +152,42 @@ function createApp() {
     cors: { origin: '*', methods: ['GET', 'POST'] },
   });
 
+  // ─── Compute app version at startup ───
+  const now = new Date();
+  const buildTime =
+    now.getFullYear().toString() +
+    String(now.getMonth() + 1).padStart(2, '0') +
+    String(now.getDate()).padStart(2, '0') + '-' +
+    String(now.getHours()).padStart(2, '0') +
+    String(now.getMinutes()).padStart(2, '0') +
+    String(now.getSeconds()).padStart(2, '0');
+  const APP_VERSION = buildTime;  // e.g. "20260604-141530"
+
+  // Read & inject version into HTML once at startup (cache-busting)
+  const rawHtml = fs.readFileSync(path.join(__dirname, 'public', 'index.html'), 'utf-8');
+  const processedHtml = rawHtml.replace(/<!--APP_VERSION-->/g, APP_VERSION);
+
+  // Serve version-injected HTML for root (BEFORE express.static)
+  app.get('/', (req, res) => {
+    res.setHeader('Cache-Control', 'no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.type('html').send(processedHtml);
+  });
+
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
   app.use('/uploads', express.static(UPLOAD_DIR));
-  // No-cache for HTML to force fresh loads
-  app.use((req, res, next) => {
-    if (req.path.endsWith('.html') || req.path === '/') {
-      res.setHeader('Cache-Control', 'no-store, must-revalidate');
+  // No-cache for static HTML files (other pages like index.html accessed directly)
+  app.use(express.static(path.join(__dirname, 'public'), {
+    setHeaders: (res, filePath) => {
+      if (filePath.endsWith('.html')) {
+        res.setHeader('Cache-Control', 'no-store, must-revalidate');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
+      }
     }
-    next();
-  });
-  app.use(express.static(path.join(__dirname, 'public')));
+  }));
 
   // ── Auth API ──
   app.post('/api/login', (req, res) => {
@@ -607,9 +632,17 @@ function createApp() {
     }
   });
 
-  // ── SPA fallback ──
+  // ── Version API ──
+  app.get('/api/version', (req, res) => {
+    res.json({ version: APP_VERSION, buildTime: new Date().toISOString() });
+  });
+
+  // ── SPA fallback (serve version-injected HTML) ──
   app.get(['/chat', '/login', '/admin', '/setup', '/'], (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    res.setHeader('Cache-Control', 'no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.type('html').send(processedHtml);
   });
 
   // ── Socket.IO ──

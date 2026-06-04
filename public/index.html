@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <title>AI漫畫對話</title>
+  <!--APP_VERSION-->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎨</text></svg>">
   <link rel="manifest" href="/manifest.json">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -187,6 +188,7 @@
     .topbar .room-info { flex: 1; min-width: 0; }
     .topbar h1 { font-size: 17px; font-weight: 700; }
     .topbar .subtitle { font-size: 12px; color: var(--muted); }
+    .version-badge { font-size: 10px; color: var(--muted); opacity: 0.5; }
     .topbar nav { display: flex; gap: 4px; flex-shrink: 0; }
     .topbar .icon-btn {
       width: 36px; height: 36px; padding: 0; border: none; border-radius: 50%;
@@ -561,6 +563,9 @@
 
   <script src="/socket.io/socket.io.js"></script>
   <script>
+  // ─── Version (injected at server start) ───
+  const APP_VERSION = '<!--APP_VERSION-->';
+
   // ─── State ───
   const PAGE_SIZE = 30;
 
@@ -733,6 +738,7 @@
           <div class="menu" id="roomMenu"></div>
         </div>
         <div class="subtitle" id="roomSubtitle"></div>
+        <div class="version-badge" id="versionBadge"></div>
       </div>
       <nav>
         <button class="icon-btn" id="btnSearch" aria-label="搜尋訊息" title="搜尋訊息">🔍</button>
@@ -1692,6 +1698,8 @@
       if (room) {
         roomName.textContent = room.name;
         roomSubtitle.textContent = room.description || '';
+        const vb = document.getElementById('versionBadge');
+        if (vb) vb.textContent = `v${APP_VERSION}`;
         applyRoomTheme(room);
         updateRoomAvatar(room);
       }
@@ -1733,6 +1741,8 @@
           applyRoomTheme(cur);
           updateRoomAvatar(cur);
           roomSubtitle.textContent = cur.description || '';
+          const vb = document.getElementById('versionBadge');
+          if (vb) vb.textContent = `v${APP_VERSION}`;
         }
       }
     });
@@ -2119,15 +2129,6 @@
   }
 
   async function init() {
-    // ─── PWA: Register service worker ───
-    if ('serviceWorker' in navigator) {
-      try {
-        await navigator.serviceWorker.register('/sw.js');
-      } catch (e) {
-        console.log('SW registration failed:', e);
-      }
-    }
-
     const res = await api('/api/check-setup');
     if (res.needsSetup) return render.setup();
 
