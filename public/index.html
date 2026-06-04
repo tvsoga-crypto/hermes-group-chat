@@ -373,21 +373,6 @@
     .context-menu .ctx-item.danger { color: var(--danger); }
     .context-menu .ctx-item.danger:hover { background: var(--danger-bg); }
 
-    /* ── Language bar ── */
-    .lang-bar {
-      position: fixed; bottom: 12px; left: 12px; z-index: 9999;
-      display: flex; gap: 2px; background: var(--surface2);
-      border: 1px solid var(--line); border-radius: 20px; padding: 2px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    }
-    .lang-btn {
-      padding: 3px 8px; border: none; border-radius: 16px;
-      background: transparent; color: var(--muted); font-size: 12px;
-      cursor: pointer; font-weight: 500; transition: all 0.15s;
-    }
-    .lang-btn:hover { color: var(--ink); background: var(--surface); }
-    .lang-btn.active { background: var(--brand); color: #fff; }
-
     /* ── Search overlay ── */
     .search-overlay {
       position: fixed; inset: 0; z-index: 999; background: var(--bg);
@@ -1973,6 +1958,14 @@
             ${__('新密碼（留空不修改）')}
             <input name="password" type="password" placeholder="${__('留空則不變')}" style="display:block;width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface2);color:var(--ink);outline:none;">
           </label>
+          <div style="margin-bottom:16px;">
+            <div style="font-size:13px;color:var(--muted);margin-bottom:6px;">${__('語言')}</div>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="modal-lang-btn" data-lang="zh-Hant" style="flex:1;padding:6px 0;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;font-size:13px;transition:all 0.15s;">繁</button>
+              <button type="button" class="modal-lang-btn" data-lang="zh-Hans" style="flex:1;padding:6px 0;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;font-size:13px;transition:all 0.15s;">简</button>
+              <button type="button" class="modal-lang-btn" data-lang="en" style="flex:1;padding:6px 0;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;font-size:13px;transition:all 0.15s;">EN</button>
+            </div>
+          </div>
           <div id="profileMsg" style="margin-bottom:12px;font-size:13px;display:none;"></div>
           <div style="display:flex;gap:8px;justify-content:flex-end;">
             <button type="button" id="cancelProfile" style="padding:8px 16px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;">${__('取消')}</button>
@@ -1987,6 +1980,27 @@
 
     document.getElementById('cancelProfile').onclick = () => overlay.remove();
     overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+
+    // ─── Language selection ───
+    const currentLang = getCurrentLang();
+    overlay.querySelectorAll('.modal-lang-btn').forEach(function(btn) {
+      if (btn.dataset.lang === currentLang) {
+        btn.style.background = 'var(--brand)';
+        btn.style.color = '#fff';
+        btn.style.borderColor = 'var(--brand)';
+      }
+      btn.onclick = function() {
+        setLanguage(this.dataset.lang);
+        overlay.querySelectorAll('.modal-lang-btn').forEach(function(b) {
+          b.style.background = 'transparent';
+          b.style.color = 'var(--muted)';
+          b.style.borderColor = 'var(--line)';
+        });
+        this.style.background = 'var(--brand)';
+        this.style.color = '#fff';
+        this.style.borderColor = 'var(--brand)';
+      };
+    });
 
     document.getElementById('profileForm').onsubmit = async (e) => {
       e.preventDefault();

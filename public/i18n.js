@@ -220,6 +220,7 @@
     '[檔案]': { 'zh-Hant': '[檔案]', 'zh-Hans': '[文件]', 'en': '[File]' },
     '🎬 影片': { 'zh-Hant': '🎬 影片', 'zh-Hans': '🎬 视频', 'en': '🎬 Video' },
     '🖼️ 圖片': { 'zh-Hant': '🖼️ 圖片', 'zh-Hans': '🖼️ 图片', 'en': '🖼️ Image' },
+    '語言': { 'zh-Hant': '語言', 'zh-Hans': '语言', 'en': 'Language' },
   };
 
   // ---------- 目前語言 ----------
@@ -248,11 +249,6 @@
     if (!['zh-Hant', 'zh-Hans', 'en'].includes(lang)) return;
     currentLang = lang;
     localStorage.setItem(STORAGE_KEY, lang);
-
-    // 更新語言按鈕高亮
-    document.querySelectorAll('.lang-btn').forEach(function (btn) {
-      btn.classList.toggle('active', btn.dataset.lang === lang);
-    });
 
     // 更新 HTML lang 屬性
     document.documentElement.lang = lang === 'en' ? 'en' : (lang === 'zh-Hans' ? 'zh-Hans' : 'zh-Hant');
@@ -288,31 +284,8 @@
     }
   }
 
-  // ---------- 語言切換按鈕 HTML ----------
-  function createLangBar() {
-    var div = document.createElement('div');
-    div.className = 'lang-bar';
-    div.innerHTML =
-      '<button class="lang-btn" data-lang="zh-Hant">繁</button>' +
-      '<button class="lang-btn" data-lang="zh-Hans">简</button>' +
-      '<button class="lang-btn" data-lang="en">EN</button>';
-    div.addEventListener('click', function (e) {
-      var btn = e.target.closest('.lang-btn');
-      if (btn) window.setLanguage(btn.dataset.lang);
-    });
-    document.body.appendChild(div);
-
-    // 高亮目前語言
-    document.querySelectorAll('.lang-btn').forEach(function (btn) {
-      btn.classList.toggle('active', btn.dataset.lang === currentLang);
-    });
-  }
-
   // ---------- 初始化 ----------
   function init() {
-    // 創建語言列
-    createLangBar();
-
     // 套用目前語言
     document.documentElement.lang = currentLang === 'en' ? 'en' : (currentLang === 'zh-Hans' ? 'zh-Hans' : 'zh-Hant');
     translatePage();
