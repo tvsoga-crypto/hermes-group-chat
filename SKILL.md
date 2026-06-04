@@ -48,6 +48,23 @@ node server.js
 open http://localhost:3000
 ```
 
+### Auto-start on Boot (macOS)
+
+Install as a launchd service so the chat server starts automatically after reboot:
+
+```bash
+# Download the plist from the repo
+curl -o ~/Library/LaunchAgents/chat-app.plist \
+  https://raw.githubusercontent.com/tvsoga-crypto/hermes-group-chat/main/scripts/chat-app.plist
+
+# Load the service
+launchctl load ~/Library/LaunchAgents/chat-app.plist
+
+# Verify it's running
+launchctl list | grep chat-app
+curl http://localhost:3000
+```
+
 Default accounts (password: `00000000`):
 | Username | Display Name | Role |
 |----------|-------------|------|
