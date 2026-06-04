@@ -1372,6 +1372,23 @@
       }, 400);
 
       setInterval(updateScrollButton, 500);
+
+      // ─── Mobile keyboard: scroll to bottom when viewport resizes ───
+      if (window.visualViewport) {
+        let prevViewportHeight = window.visualViewport.height;
+        window.visualViewport.addEventListener('resize', () => {
+          const vh = window.visualViewport.height;
+          const isShrinking = vh < prevViewportHeight; // keyboard opened
+          prevViewportHeight = vh;
+          if (isShrinking) {
+            scrollToBottom();
+          }
+        });
+      }
+      // Also scroll when input gets focus (keyboard about to appear)
+      input.addEventListener('focus', () => {
+        setTimeout(scrollToBottom, 300);
+      });
     }
 
     function scrollToBottomIfNearBottom() {
