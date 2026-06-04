@@ -1557,6 +1557,25 @@
       overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
     }
 
+    // ─── Paste image from clipboard ───
+    input.addEventListener('paste', function(e) {
+      const items = e.clipboardData?.items;
+      if (!items) return;
+      for (const item of items) {
+        if (item.type.startsWith('image/')) {
+          const file = item.getAsFile();
+          if (file) {
+            e.preventDefault();
+            // Rename file with a useful name
+            const ext = item.type.split('/')[1] || 'png';
+            const renamed = new File([file], `pasted-${Date.now()}.${ext}`, { type: item.type });
+            showUploadPreview(renamed);
+          }
+          break;
+        }
+      }
+    });
+
     // ─── Online users badge ───
     function updateOnlineBadge() {
       const badge = document.getElementById('onlineBadge');
