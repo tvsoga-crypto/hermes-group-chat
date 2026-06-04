@@ -1207,17 +1207,21 @@
 
     // ─── Scroll-to-bottom ───
     function scrollToBottom() {
-      requestAnimationFrame(scrollSentinelIntoView);
+      scrollSentinelIntoView();
     }
 
     function forceScrollToBottom() {
-      requestAnimationFrame(scrollSentinelIntoView);
+      scrollSentinelIntoView();
       let tries = 0;
       const interval = setInterval(() => {
-        requestAnimationFrame(scrollSentinelIntoView);
+        scrollSentinelIntoView();
         tries++;
-        if (tries >= 5) clearInterval(interval);
-      }, 200);
+        if (tries >= 10) clearInterval(interval);
+      }, 100);
+      // Also try on next frame
+      requestAnimationFrame(function() {
+        scrollSentinelIntoView();
+      });
     }
 
     function scrollSentinelIntoView() {
@@ -1355,8 +1359,8 @@
               state.readReceipts[mid].push({ userId: rr.user_id, displayName: rr.displayName || rr.display_name });
             }
           });
-          renderMessages();
-          forceScrollToBottom();
+          renderMessages({ maintainScroll: true });
+          scrollToBottom();
         }
       });
     }
