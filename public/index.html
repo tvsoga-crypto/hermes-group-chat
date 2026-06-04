@@ -1109,7 +1109,7 @@
       const { prepend = false, maintainScroll = false } = options;
 
       if (state.messages.length === 0) {
-        msgsEl.innerHTML = '<div class="empty">' + __('還沒有訊息，來打聲招呼吧！👋') + '</div><div id="scrollSentinel" style="height:55px;margin:0;"></div>';
+        msgsEl.innerHTML = '<div class="empty">' + __('還沒有訊息，來打聲招呼吧！👋') + '</div><div id="scrollSentinel" style="height:8px;margin:0;"></div>';
         return;
       }
 
@@ -1209,7 +1209,7 @@
         </div>`;
       }).join('');
 
-      msgsEl.innerHTML = html + '<div id="scrollSentinel" style="height:55px;margin:0;"></div>';
+      msgsEl.innerHTML = html + '<div id="scrollSentinel" style="height:8px;margin:0;"></div>';
 
       if (maintainScroll) {
         const newScrollHeight = msgsEl.scrollHeight;
