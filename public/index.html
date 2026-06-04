@@ -786,9 +786,9 @@
       input.style.height = Math.min(input.scrollHeight, 120) + 'px';
     });
 
-    // Enter to send
+    // Enter to send (skip during IME composition — Chinese/Japanese input)
     input.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
+      if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) {
         e.preventDefault();
         form.dispatchEvent(new Event('submit'));
       }
@@ -927,7 +927,7 @@
       };
 
       editInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter' && !e.isComposing) {
           e.preventDefault();
           document.getElementById('editSave').click();
         }
@@ -1521,7 +1521,7 @@
       overlay.querySelector('#closePreview').onclick = () => { URL.revokeObjectURL(url); overlay.remove(); };
       overlay.querySelector('#sendWithCaption').onclick = doSend;
       overlay.querySelector('#captionInput').addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') doSend();
+        if (e.key === 'Enter' && !e.isComposing) doSend();
       });
       overlay.querySelector('#captionInput').focus();
       overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
@@ -1584,7 +1584,7 @@
       });
 
       searchInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter' && !e.isComposing) {
           clearTimeout(searchTimeout);
           performSearch(searchInput.value.trim());
         }
