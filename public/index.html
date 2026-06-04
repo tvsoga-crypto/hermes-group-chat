@@ -759,8 +759,8 @@
         state.token = res.token;
         state.user = res.user;
         localStorage.setItem('haima_token', res.token);
-        connectSocket();
         render.chat();
+        connectSocket();
       } else {
         render.login(res.error);
       }
@@ -1284,9 +1284,8 @@
       const interval = setInterval(() => {
         scrollSentinelIntoView();
         tries++;
-        if (tries >= 10) clearInterval(interval);
-      }, 100);
-      // Also try on next frame
+        if (tries >= 15) clearInterval(interval);
+      }, 200);
       requestAnimationFrame(function() {
         scrollSentinelIntoView();
       });
@@ -1297,9 +1296,14 @@
       if (sentinel) {
         sentinel.scrollIntoView({ block: 'end', behavior: 'auto' });
       } else {
-        msgsEl.scrollTop = msgsEl.scrollHeight;
+        // Fallback: find last bubble and scroll to it
+        const lastBubble = msgsEl.querySelector('.bubble-row:last-child');
+        if (lastBubble) {
+          lastBubble.scrollIntoView({ block: 'end', behavior: 'auto' });
+        } else {
+          msgsEl.scrollTop = msgsEl.scrollHeight;
+        }
       }
-      msgsEl.scrollTop = msgsEl.scrollHeight;
     }
 
     async function loadMoreMessages() {
@@ -2298,12 +2302,13 @@
     if (state.token) {
       state.user = decodeToken(state.token);
       if (state.user) {
-        connectSocket();
         const msgs = await api(`/api/messages?room_id=${state.currentRoomId}`);
         if (msgs.ok) {
           state.messages = msgs.messages;
           state.hasMore = msgs.hasMore;
-          return render.chat();
+          render.chat();
+          connectSocket();
+          return;
         }
       }
       // Token invalid
