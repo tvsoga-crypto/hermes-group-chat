@@ -22,16 +22,32 @@ A multi-user web chatroom for team collaboration with **Hermes Agent** as the AI
 
 ## 🚀 Quick Start
 
+### Prerequisites — Enable Hermes API Server
+
+The chat app connects to Hermes Agent's API Server on port **8642**. Enable it:
+
+```bash
+# 1. Set API_SERVER_KEY in Hermes config (one-time)
+echo 'API_SERVER_KEY=my-chat-key' >> ~/.hermes/.env
+
+# 2. Restart Hermes Gateway to apply
+hermes gateway restart
+
+# 3. Verify API server is running
+curl http://localhost:8642/health
+# Expected: {"status": "ok", "platform": "hermes-agent"}
+```
+
+### Start the Chat Server
+
 ```bash
 # 1. Install dependencies
 npm install
 
-# 2. Make sure Hermes Agent is running (default: port 8642)
+# 2. Start the server (set HERMES_API_KEY to match your API_SERVER_KEY)
+HERMES_API_KEY=my-chat-key node server.js
 
-# 3. Start the server
-node server.js
-
-# 4. Open in browser
+# 3. Open in browser
 open http://localhost:3000
 ```
 

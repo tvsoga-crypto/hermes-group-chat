@@ -20,6 +20,22 @@ The chat app runs on `http://localhost:3000` (or your LAN IP, e.g. `http://192.1
 
 ## Quick Start
 
+### Prerequisites
+Before starting the chat server, make sure Hermes Agent's **API Server** is enabled:
+
+```bash
+# 1. Set API_SERVER_KEY in Hermes config (one-time)
+echo 'API_SERVER_KEY=my-chat-key' >> ~/.hermes/.env
+
+# 2. Restart Hermes Gateway
+hermes gateway restart
+
+# 3. Verify API server is running
+curl http://localhost:8642/health
+# Should return: {"status": "ok", "platform": "hermes-agent"}
+```
+
+### Start the Chat Server
 ```bash
 # Install dependencies
 cd hermes-group-chat
@@ -115,9 +131,26 @@ Environment variables (or edit directly in `server.js`):
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `PORT` | `3000` | Server port |
-| `HERMES_API_URL` | `http://localhost:8642/v1/chat/completions` | Hermes Gateway API |
-| `HERMES_API_KEY` | `haima-chat-key-2026` | API auth key |
+| `HERMES_API_URL` | `http://localhost:8642/v1/chat/completions` | Hermes Agent API Server |
+| `HERMES_API_KEY` | `haima-chat-key-2026` | Must match `API_SERVER_KEY` in `~/.hermes/.env` |
 | `JWT_SECRET` | auto-generated | JWT signing secret |
+
+### Enabling the API Server (if not already done)
+
+The Hermes Agent API Server runs on port 8642 and needs the `API_SERVER_KEY` environment variable set:
+
+```bash
+# Set your API key
+echo 'API_SERVER_KEY=my-chat-key' >> ~/.hermes/.env
+
+# Restart gateway to apply
+hermes gateway restart
+
+# Update server.js to use the same key
+# Edit HERMES_API_KEY in server.js to match your API_SERVER_KEY
+```
+
+> ⚠️ **Important:** `HERMES_API_KEY` in `server.js` (or `HERMES_API_KEY` env var) must match the `API_SERVER_KEY` you set in `~/.hermes/.env`. Otherwise the chat server won't be able to authenticate with the Hermes Agent API.
 
 ## Custom AI System Prompt
 
