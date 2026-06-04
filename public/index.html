@@ -477,6 +477,19 @@
     .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
     @keyframes typing { 0%, 60%, 100% { opacity: 0.3; } 30% { opacity: 1; } }
 
+    /* ── Streaming AI animations ── */
+    .thinking-dots .dot-1 { animation: blinkDot 1.4s infinite; }
+    .thinking-dots .dot-2 { animation: blinkDot 1.4s 0.2s infinite; }
+    .thinking-dots .dot-3 { animation: blinkDot 1.4s 0.4s infinite; }
+    @keyframes blinkDot { 0%, 60%, 100% { opacity: 0.3; } 30% { opacity: 1; } }
+    .streaming-cursor {
+      display: inline-block; animation: cursorBlink 1s step-end infinite;
+      font-weight: 300; color: var(--success);
+    }
+    @keyframes cursorBlink { 50% { opacity: 0; } }
+    .streaming-msg .bubble { border-left-color: var(--brand); }
+    .streaming-msg .bubble-name { color: var(--success); }
+
     /* ── Composer area ── */
     .composer-area { flex-shrink: 0; position: sticky; bottom: 0; z-index: 10; }
     .composer {
@@ -589,6 +602,10 @@
     replyToMessage: null,
     searchResults: null,
     readReceipts: {},
+    // Streaming AI response
+    aiStatus: null,       // null | 'thinking' | 'streaming'
+    aiStreamContent: '',
+    aiStreamId: null,
   };
 
   let socket = null;
@@ -1209,7 +1226,30 @@
         </div>`;
       }).join('');
 
-      msgsEl.innerHTML = html + '<div id="scrollSentinel" style="height:8px;margin:0;"></div>';
+      // Streaming AI response bubble
+      let streamHtml = '';
+      if (state.aiStatus) {
+        if (state.aiStatus === 'thinking') {
+          streamHtml = `<div class="bubble-row ai streaming-msg" data-streaming="true">
+            <div class="bubble">
+              <div class="bubble-name">🐍 海馬</div>
+              <div class="bubble-content" style="color:var(--muted);">
+                <span class="thinking-dots">🐍 海馬正在思考<span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></span>
+              </div>
+            </div>
+          </div>`;
+        } else if (state.aiStatus === 'streaming' && state.aiStreamContent) {
+          const rendered = renderContentWithCode(state.aiStreamContent);
+          streamHtml = `<div class="bubble-row ai streaming-msg" data-streaming="true">
+            <div class="bubble">
+              <div class="bubble-name">🐍 海馬 <span class="streaming-cursor">▎</span></div>
+              <div class="bubble-content">${rendered}</div>
+            </div>
+          </div>`;
+        }
+      }
+
+      msgsEl.innerHTML = html + streamHtml + '<div id="scrollSentinel" style="height:8px;margin:0;"></div>';
 
       if (maintainScroll) {
         const newScrollHeight = msgsEl.scrollHeight;
@@ -1428,6 +1468,42 @@
         console.error('Socket error:', err);
       });
 
+      // ─── AI Streaming status ───
+      socket.on('chat:ai_status', (data) => {
+        if (data.step === 'thinking') {
+          state.aiStatus = 'thinking';
+          state.aiStreamContent = '';
+          renderMessages();
+          forceScrollToBottom();
+        } else if (data.step === 'streaming') {
+          state.aiStatus = 'streaming';
+          state.aiStreamContent = data.content || '';
+          renderMessages({ maintainScroll: true });
+          if (isNearBottom()) {
+            scrollToBottom();
+          }
+        }
+      });
+
+      // ─── AI streaming complete (final message saved to DB) ───
+      socket.on('chat:ai_done', (msg) => {
+        state.aiStatus = null;
+        state.aiStreamContent = '';
+        state.messages.push(msg);
+        if (state.messages.length > 500) state.messages = state.messages.slice(-400);
+        renderMessages();
+        scrollToBottom();
+        // Notification for AI response
+        const wasNearBottom = isNearBottom();
+        if (!wasNearBottom) {
+          playNotificationBeep();
+        }
+        // Send read receipt
+        if (socket?.connected) {
+          socket.emit('chat:read_receipt', { last_read_message_id: msg.id, room_id: state.currentRoomId });
+        }
+      });
+
       socket.on('connect', () => {
         state.connected = true;
       });
@@ -1476,6 +1552,9 @@
         cancelReply();
       }
 
+      // Clear any previous AI streaming state
+      state.aiStatus = null;
+      state.aiStreamContent = '';
       socket.emit('chat:message', msgData);
       input.value = '';
       input.style.height = 'auto';

@@ -20,7 +20,7 @@ const AI_HISTORY_LIMIT = 40;
 
 // ─── DeepSeek API config for AI Creation Advisor ───
 const DEEPSEEK_API = 'https://api.deepseek.com/v1/chat/completions';
-const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY || '';
+const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY || 'sk-8d3340b0264e4e87856b4c7222c5cb98';
 
 const ADVISOR_SYSTEM_PROMPT = `你是「漫畫創作顧問」，隸屬於一個大型漫畫家資料庫。你的任務是透過對話引導創作者，幫助他們找到適合自己的創作風格、畫風和題材。
 
@@ -47,18 +47,24 @@ const ADVISOR_SYSTEM_PROMPT = `你是「漫畫創作顧問」，隸屬於一個�
 - 運動（棒球、籃球、足球、格鬥技、競技）
 
 引導流程（自由對話，不需嚴格按順序）：
-1. 先認識創作者（名字、年齡、職業、興趣）
-2. 了解他們的漫畫故事（最後一次看漫畫時間、平台、最感動的作品、喜歡的作家）
-3. 探索創作偏好（喜歡的國家風格、畫風、題材、目標讀者）
-4. 了解擅長領域與夢想（擅長畫什麼、夢想作品、什麼能觸動他們）
+1. 先認識創作者
+2. 了解他們的漫畫故事
+3. 探索創作偏好
+4. 了解擅長領域與夢想
 
 回答規則：
 - 使用繁體中文、溫暖友善的語氣
-- 每次只問1-2個問題，不要一次問太多
+- 【重要】每一則回覆【只能包含一個問句】。
+  例如 ❌「你叫什麼名字？你的興趣是什麼？」→ ✅「你叫什麼名字？」下一回合再問興趣。
+- 上一題對方回答後，先給予肯定回應或簡短分析，再接下一題
 - 根據對方的回答，從資料庫中找出相關的大師作為參考
 - 在適當的時候，給出具體的創作建議
 - 當你覺得已經收集足夠資訊時，可以主動給出完整的「創作者分析報告」
-- 報告格式包含：風格定位、最接近的大師、適合題材、建議強化方向、推薦閱讀作品`;
+- 報告格式包含：風格定位、最接近的大師、適合題材、建議強化方向、推薦閱讀作品
+- 【選項按鈕規則】當你提出問題時，請在回覆最後加上選項按鈕，格式為：
+  [Options: 選項1, 選項2, 選項3]
+  例如：你平常最喜歡看哪一類型的劇情？(◕‿◕✿)  [Options: 熱血戰鬥, 甜甜戀愛, 懸疑推理, 搞笑日常]
+  如果該問題適合讓使用者自由回答，則不加 [Options]。`;
 
 async function callDeepSeekAI(messages) {
   if (!DEEPSEEK_API_KEY) {
@@ -98,8 +104,9 @@ async function callDeepSeekAI(messages) {
   }
 }
 
-// ─── Call Hermes Agent via Gateway API ───
-async function callHermesAI(messages) {
+// ─── Call Hermes Agent via Gateway API (streaming) ───
+async function callHermesAI(messages, callbacks = {}) {
+  const { onToken, onDone, onError } = callbacks;
   try {
     const history = buildAIHistory(messages);
     const response = await fetch(HERMES_API, {
@@ -113,27 +120,88 @@ async function callHermesAI(messages) {
         messages: history,
         temperature: 0.7,
         max_tokens: 4096,
-        stream: false,
+        stream: true,
       }),
     });
 
     if (!response.ok) {
       const errText = await response.text();
       console.error('Hermes API error:', response.status, errText);
-      return `海馬暫時連不上，請稍後再試。（錯誤 ${response.status}）`;
+      if (onError) onError(`海馬暫時連不上，請稍後再試。（錯誤 ${response.status}）`);
+      return { content: `海馬暫時連不上，請稍後再試。（錯誤 ${response.status}）`, reasoning: null };
     }
 
-    const data = await response.json();
-    const content = data?.choices?.[0]?.message?.content;
-    const reasoning = data?.choices?.[0]?.message?.reasoning;
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let fullContent = '';
+    let reasoning = null;
 
-    if (content && content.trim()) {
-      return { content: content.trim(), reasoning: reasoning || null };
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop(); // keep incomplete line
+
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed.startsWith('data: ')) continue;
+        const json = trimmed.slice(6);
+        if (json === '[DONE]') continue;
+
+        try {
+          const parsed = JSON.parse(json);
+          const choice = parsed.choices?.[0];
+          const delta = choice?.delta || {};
+
+          if (delta.content) {
+            fullContent += delta.content;
+            if (onToken) onToken(fullContent);
+          }
+
+          if (choice?.finish_reason) {
+            // Final reasoning from the last chunk
+            if (parsed.choices?.[0]?.message?.reasoning) {
+              reasoning = parsed.choices[0].message.reasoning;
+            }
+          }
+        } catch (e) {
+          // partial JSON - skip
+        }
+      }
     }
-    return { content: '海馬沒有回應，可能是睡著了 🐍', reasoning: null };
+
+    // Handle remaining buffer
+    if (buffer.trim().startsWith('data: ')) {
+      const json = buffer.trim().slice(6);
+      if (json !== '[DONE]') {
+        try {
+          const parsed = JSON.parse(json);
+          const delta = parsed.choices?.[0]?.delta || {};
+          if (delta.content) {
+            fullContent += delta.content;
+            if (onToken) onToken(fullContent);
+          }
+          if (parsed.choices?.[0]?.message?.reasoning) {
+            reasoning = parsed.choices[0].message.reasoning;
+          }
+        } catch (e) {}
+      }
+    }
+
+    const result = {
+      content: fullContent.trim() || '海馬沒有回應，可能是睡著了 🐍',
+      reasoning: reasoning || null
+    };
+    if (onDone) onDone(result);
+    return result;
   } catch (err) {
     console.error('Hermes API call failed:', err.message);
-    return { content: `海馬連線異常：${err.message}`, reasoning: null };
+    const errMsg = `海馬連線異常：${err.message}`;
+    if (onError) onError(errMsg);
+    return { content: errMsg, reasoning: null };
   }
 }
 
@@ -845,21 +913,43 @@ function createApp() {
 
         recentMessages.push({ role: 'user', content: aiInputText, display_name: null });
 
-        io.to('room:main').emit('chat:typing', { isTyping: true });
+        // Don't emit typing - we'll use streaming status instead
+        io.to('room:main').emit('chat:ai_status', {
+          step: 'thinking',
+          text: '🐍 海馬正在思考',
+          replyToUserMsgId: userMsgId,
+        });
 
-        const result = await callHermesAI(recentMessages);
+        let finalContent = '';
+        let finalReasoning = null;
 
-        io.to('room:main').emit('chat:typing', { isTyping: false });
+        await callHermesAI(recentMessages, {
+          onToken: (fullContent) => {
+            io.to('room:main').emit('chat:ai_status', {
+              step: 'streaming',
+              text: '✍️ 正在撰寫...',
+              content: fullContent,
+              replyToUserMsgId: userMsgId,
+            });
+          },
+          onDone: (result) => {
+            finalContent = result.content;
+            finalReasoning = result.reasoning;
+          },
+          onError: (errMsg) => {
+            finalContent = errMsg;
+          },
+        });
 
-        const aiContent = typeof result === 'string' ? result : result.content;
-        const aiReasoning = typeof result === 'object' ? result.reasoning : null;
+        const aiContent = finalContent;
+        const aiReasoning = finalReasoning;
 
         const aiMsgId = db.prepare(
           'INSERT INTO messages (room_id, user_id, display_name, role, content, reasoning) VALUES (?, NULL, ?, ?, ?, ?)'
         ).run(roomId, '海馬', 'assistant', aiContent, aiReasoning).lastInsertRowid;
 
         const aiMsg = db.prepare('SELECT * FROM messages WHERE id = ?').get(aiMsgId);
-        io.to('room:main').emit('chat:new_message', {
+        io.to('room:main').emit('chat:ai_done', {
           id: aiMsg.id,
           roomId: aiMsg.room_id,
           role: 'assistant',
