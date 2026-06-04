@@ -176,6 +176,7 @@
     '帳號：': { 'zh-Hant': '帳號：', 'zh-Hans': '账号：', 'en': 'Username: ' },
     '密碼：': { 'zh-Hant': '密碼：', 'zh-Hans': '密码：', 'en': 'Password: ' },
     '新的登入資料': { 'zh-Hant': '新的登入資料', 'zh-Hans': '新的登录凭证', 'en': 'New credentials' },
+    '思考製作中…': { 'zh-Hant': '思考製作中…', 'zh-Hans': '思考制作中…', 'en': 'Thinking…' },
     '新增帳號': { 'zh-Hant': '新增帳號', 'zh-Hans': '添加账号', 'en': 'Add User' },
     '建立帳號': { 'zh-Hant': '建立帳號', 'zh-Hans': '创建账号', 'en': 'Create User' },
     '帳號列表': { 'zh-Hant': '帳號列表', 'zh-Hans': '账号列表', 'en': 'User List' },

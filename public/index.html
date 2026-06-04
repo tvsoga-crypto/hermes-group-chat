@@ -489,6 +489,18 @@
     @keyframes cursorBlink { 50% { opacity: 0; } }
     .streaming-msg .bubble { border-left-color: var(--brand); }
     .streaming-msg .bubble-name { color: var(--success); }
+    .thinking-label {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--muted);
+      margin-left: 4px;
+      animation: thinkingPulse 1.5s ease-in-out infinite;
+    }
+    @keyframes thinkingPulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
 
     /* ── Composer area ── */
     .composer-area { flex-shrink: 0; position: sticky; bottom: 0; z-index: 10; }
@@ -1242,7 +1254,7 @@
           const rendered = renderContentWithCode(state.aiStreamContent);
           streamHtml = `<div class="bubble-row ai streaming-msg" data-streaming="true">
             <div class="bubble">
-              <div class="bubble-name">🐍 海馬 <span class="streaming-cursor">▎</span></div>
+              <div class="bubble-name">🐍 海馬 <span class="streaming-cursor">▎</span><span class="thinking-label">${__('思考製作中…')}</span></div>
               <div class="bubble-content">${rendered}</div>
             </div>
           </div>`;
