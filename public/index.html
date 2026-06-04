@@ -1099,6 +1099,7 @@
       }
 
       let prevScrollHeight = msgsEl.scrollHeight;
+      let prevScrollTop = msgsEl.scrollTop;
 
       const topHtml = state.hasMore
         ? `<div id="loadMoreTrigger" style="text-align:center;padding:8px;color:var(--muted);font-size:13px;">${state.loadingMore ? __('載入中...') : '⬆ ' + __('載入更多')}</div>`
@@ -1197,7 +1198,7 @@
 
       if (maintainScroll) {
         const newScrollHeight = msgsEl.scrollHeight;
-        msgsEl.scrollTop = newScrollHeight - prevScrollHeight;
+        msgsEl.scrollTop = prevScrollTop + (newScrollHeight - prevScrollHeight);
       }
 
       // Setup context menu events after DOM update
@@ -1378,7 +1379,7 @@
         const wasNearBottom = isNearBottom();
         state.messages.push(msg);
         if (state.messages.length > 500) state.messages = state.messages.slice(-400);
-        renderMessages();
+        renderMessages({ maintainScroll: true });
         if (wasNearBottom) {
           scrollToBottom();
         }
@@ -1433,7 +1434,7 @@
         const msg = state.messages.find(m => m.id === messageId);
         if (msg) {
           msg.reactions = reactions || [];
-          renderMessages();
+          renderMessages({ maintainScroll: true });
         }
       });
 
@@ -1443,7 +1444,7 @@
         if (!state.readReceipts[lastReadMessageId]) state.readReceipts[lastReadMessageId] = [];
         if (!state.readReceipts[lastReadMessageId].some(r => r.userId === userId)) {
           state.readReceipts[lastReadMessageId].push({ userId, displayName });
-          renderMessages();
+          renderMessages({ maintainScroll: true });
         }
       });
     }
