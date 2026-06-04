@@ -1284,11 +1284,8 @@
       const interval = setInterval(() => {
         scrollSentinelIntoView();
         tries++;
-        if (tries >= 15) clearInterval(interval);
-      }, 200);
-      requestAnimationFrame(function() {
-        scrollSentinelIntoView();
-      });
+        if (tries >= 5) clearInterval(interval);
+      }, 100);
     }
 
     function scrollSentinelIntoView() {
@@ -1471,7 +1468,7 @@
         if (data.isTyping) {
           typingEl.classList.remove('hidden');
           clearTimeout(state.typingTimeout);
-          forceScrollToBottom();
+          scrollToBottom();
           state.typingTimeout = setTimeout(() => typingEl.classList.add('hidden'), 30000);
         } else {
           typingEl.classList.add('hidden');
@@ -1493,7 +1490,7 @@
           state.aiStatus = 'thinking';
           state.aiStreamContent = '';
           renderMessages();
-          forceScrollToBottom();
+          scrollToBottom();
         } else if (data.step === 'streaming') {
           state.aiStatus = 'streaming';
           state.aiStreamContent = data.content || '';
