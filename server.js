@@ -18,6 +18,86 @@ const AI_SYSTEM_PROMPT = process.env.AI_SYSTEM_PROMPT || `你叫做海馬（Haim
 
 const AI_HISTORY_LIMIT = 40;
 
+// ─── DeepSeek API config for AI Creation Advisor ───
+const DEEPSEEK_API = 'https://api.deepseek.com/v1/chat/completions';
+const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY || '';
+
+const ADVISOR_SYSTEM_PROMPT = `你是「漫畫創作顧問」，隸屬於一個大型漫畫家資料庫。你的任務是透過對話引導創作者，幫助他們找到適合自己的創作風格、畫風和題材。
+
+你的資料庫包含以下知識：
+
+📊 七大區域漫畫家庫：日本、美國、韓國、歐洲、台灣、香港、中國，總共超過400位作家
+
+🎯 五大讀者分類：兒童、少年、青年、成人、少女
+
+📐 六大創作維度評分（1-10）：劇情深度、畫風細膩度、色彩豐富度、閱讀門檻（越高越難入門）、角色塑造、風格實驗性 + 熱銷程度（1-10）
+
+🎨 十七種風格標籤：寫實派、半寫實、美型派、可愛風、萌系、精緻細膩、簡潔清新、粗獷豪放、水墨/毛筆、經典畫風、現代畫風、歐美畫風、黑暗系、童話風、極簡主義、實驗性、浮世繪風
+
+📌 十大題材主標籤與子標籤：
+- 動作/戰鬥（格鬥、冒險、忍者、武士、武俠、功夫、王道）
+- 科幻（SF、機甲、機器人、賽博龐克、未來世界、AI、異世界）
+- 奇幻（魔法、神話、傳說、劍與魔法、龍、轉生）
+- 恐怖（驚悚、懸疑、獵奇、靈異、鬼怪、克蘇魯、心理恐怖、復仇）
+- 搞笑（喜劇、諷刺、黑色幽默、四格、惡搞）
+- 愛情（戀愛、純愛、BL、GL、成人戀愛、青梅竹馬）
+- 懸疑/推理（解謎、犯罪、偵探、心理戰、反轉）
+- 日常/生活（溫馨、療癒、親情、職人、美食、旅行）
+- 歷史（時代劇、戰國、古裝、歷史改編、神話傳承）
+- 運動（棒球、籃球、足球、格鬥技、競技）
+
+引導流程（自由對話，不需嚴格按順序）：
+1. 先認識創作者（名字、年齡、職業、興趣）
+2. 了解他們的漫畫故事（最後一次看漫畫時間、平台、最感動的作品、喜歡的作家）
+3. 探索創作偏好（喜歡的國家風格、畫風、題材、目標讀者）
+4. 了解擅長領域與夢想（擅長畫什麼、夢想作品、什麼能觸動他們）
+
+回答規則：
+- 使用繁體中文、溫暖友善的語氣
+- 每次只問1-2個問題，不要一次問太多
+- 根據對方的回答，從資料庫中找出相關的大師作為參考
+- 在適當的時候，給出具體的創作建議
+- 當你覺得已經收集足夠資訊時，可以主動給出完整的「創作者分析報告」
+- 報告格式包含：風格定位、最接近的大師、適合題材、建議強化方向、推薦閱讀作品`;
+
+async function callDeepSeekAI(messages) {
+  if (!DEEPSEEK_API_KEY) {
+    return { content: 'AI 顧問尚未設定 API key，請管理員設定後再使用。', reasoning: null };
+  }
+  try {
+    const response = await fetch(DEEPSEEK_API, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${DEEPSEEK_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: 'deepseek-chat',
+        messages: [{ role: 'system', content: ADVISOR_SYSTEM_PROMPT }, ...messages],
+        temperature: 0.8,
+        max_tokens: 4096,
+        stream: false,
+      }),
+    });
+
+    if (!response.ok) {
+      const errText = await response.text();
+      console.error('DeepSeek API error:', response.status, errText);
+      return { content: `AI 顧問連線異常，請稍後再試。（錯誤 ${response.status}）`, reasoning: null };
+    }
+
+    const data = await response.json();
+    const content = data?.choices?.[0]?.message?.content;
+    if (content && content.trim()) {
+      return { content: content.trim(), reasoning: null };
+    }
+    return { content: 'AI 顧問暫時沒有回應。', reasoning: null };
+  } catch (err) {
+    console.error('DeepSeek API call failed:', err.message);
+    return { content: `AI 顧問連線異常：${err.message}`, reasoning: null };
+  }
+}
+
 // ─── Call Hermes Agent via Gateway API ───
 async function callHermesAI(messages) {
   try {
@@ -181,7 +261,7 @@ function createApp() {
   // No-cache for static HTML files (other pages like index.html accessed directly)
   app.use(express.static(path.join(__dirname, 'public'), {
     setHeaders: (res, filePath) => {
-      if (filePath.endsWith('.html')) {
+      if (filePath.endsWith('.html') || filePath.endsWith('.csv') || filePath.endsWith('.json')) {
         res.setHeader('Cache-Control', 'no-store, must-revalidate');
         res.setHeader('Pragma', 'no-cache');
         res.setHeader('Expires', '0');
@@ -635,6 +715,49 @@ function createApp() {
   // ── Version API ──
   app.get('/api/version', (req, res) => {
     res.json({ version: APP_VERSION, buildTime: new Date().toISOString() });
+  });
+
+  // ── Server stats (Socket.IO connections) ──
+  app.get('/api/stats', (req, res) => {
+    try {
+      const sockets = io.sockets.sockets;
+      const rooms = io.sockets.adapter.rooms;
+      // Count unique users per room from connected sockets
+      const roomUsers = {};
+      for (const [sid, socket] of sockets) {
+        const user = socket.user || { displayName: 'unknown' };
+        for (const room of socket.rooms) {
+          if (room !== sid) { // skip the default socket room
+            if (!roomUsers[room]) roomUsers[room] = new Set();
+            roomUsers[room].add(user.displayName || user.username || 'unknown');
+          }
+        }
+      }
+      res.json({
+        ok: true,
+        totalConnections: sockets.size,
+        rooms: Object.fromEntries(
+          Object.entries(roomUsers).map(([room, users]) => [room, [...users]])
+        )
+      });
+    } catch(e) {
+      res.json({ ok: false, error: e.message });
+    }
+  });
+
+  // ── AI Creation Advisor API ──
+  app.post('/api/advisor', async (req, res) => {
+    try {
+      const { messages } = req.body;
+      if (!messages || !Array.isArray(messages) || messages.length === 0) {
+        return res.status(400).json({ ok: false, error: '請提供對話內容' });
+      }
+      const result = await callDeepSeekAI(messages);
+      res.json({ ok: true, reply: result.content });
+    } catch (err) {
+      console.error('/api/advisor error:', err);
+      res.status(500).json({ ok: false, error: '伺服器錯誤' });
+    }
   });
 
   // ── SPA fallback (serve version-injected HTML) ──
