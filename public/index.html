@@ -265,6 +265,9 @@
     .mine .bubble-name { color: #79c0ff; }
     .ai .bubble-name { color: var(--success); }
     .bubble-content { font-size: 15px; line-height: 1.55; white-space: pre-wrap; }
+    .bubble-content a { color: var(--brand); text-decoration: underline; text-underline-offset: 2px; }
+    .bubble-content a:hover { color: var(--brand-hover); }
+    .bubble-content a::after { content: ' ↗'; font-size: 12px; }
     .bubble time { display: block; font-size: 11px; color: var(--muted); text-align: right; margin-top: 2px; }
 
     /* ── Reply quoted section ── */
@@ -630,13 +633,25 @@
   function renderContentWithCode(text) {
     if (!text) return '';
     let html = esc(text);
+    // Store code blocks with placeholders so URLs inside them aren't auto-linked
+    const codeBlocks = [];
     // Triple backtick code blocks
     html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (match, lang, code) => {
       const langClass = lang ? ` class="lang-${esc(lang)}"` : '';
-      return `<pre><code${langClass}>${esc(code)}</code><button class="copy-code-btn" onclick="copyCode(this)">${__('複製')}</button></pre>`;
+      const idx = codeBlocks.length;
+      codeBlocks.push(`<pre><code${langClass}>${esc(code)}</code><button class="copy-code-btn" onclick="copyCode(this)">${__('複製')}</button></pre>`);
+      return `%%CB${idx}%%`;
     });
     // Inline code
-    html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+    html = html.replace(/`([^`]+)`/g, (match, code) => {
+      const idx = codeBlocks.length;
+      codeBlocks.push(`<code>${code}</code>`);
+      return `%%IC${idx}%%`;
+    });
+    // Auto-link URLs (safe now — code blocks are replaced with placeholders)
+    html = html.replace(/(https?:\/\/[^\s<>"']+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+    // Restore code blocks
+    html = html.replace(/%%(CB|IC)(\d+)%%/g, (_, type, idx) => codeBlocks[parseInt(idx)] || '');
     // Newlines
     html = html.replace(/\n/g, '<br>');
     return html;
