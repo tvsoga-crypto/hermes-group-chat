@@ -373,6 +373,21 @@
     .context-menu .ctx-item.danger { color: var(--danger); }
     .context-menu .ctx-item.danger:hover { background: var(--danger-bg); }
 
+    /* ── Language bar ── */
+    .lang-bar {
+      position: fixed; bottom: 12px; left: 12px; z-index: 9999;
+      display: flex; gap: 2px; background: var(--surface2);
+      border: 1px solid var(--line); border-radius: 20px; padding: 2px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    .lang-btn {
+      padding: 3px 8px; border: none; border-radius: 16px;
+      background: transparent; color: var(--muted); font-size: 12px;
+      cursor: pointer; font-weight: 500; transition: all 0.15s;
+    }
+    .lang-btn:hover { color: var(--ink); background: var(--surface); }
+    .lang-btn.active { background: var(--brand); color: #fff; }
+
     /* ── Search overlay ── */
     .search-overlay {
       position: fixed; inset: 0; z-index: 999; background: var(--bg);

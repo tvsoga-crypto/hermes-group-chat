@@ -223,7 +223,14 @@
   };
 
   // ---------- 目前語言 ----------
-  let currentLang = localStorage.getItem(STORAGE_KEY) || 'zh-Hant';
+  function detectBrowserLang() {
+    var navLang = (navigator.language || navigator.userLanguage || '').toLowerCase();
+    if (navLang.startsWith('zh-hans') || navLang.startsWith('zh-cn')) return 'zh-Hans';
+    if (navLang.startsWith('zh')) return 'zh-Hant';
+    if (navLang.startsWith('en')) return 'en';
+    return null;
+  }
+  let currentLang = localStorage.getItem(STORAGE_KEY) || detectBrowserLang() || 'zh-Hant';
   let appReady = false; // 標記 app 是否已初始化
 
   // ---------- __() 翻譯函數 ----------
