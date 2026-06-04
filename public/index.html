@@ -1294,6 +1294,8 @@
         msgsEl.addEventListener('scroll', onScroll, { passive: true });
         window.addEventListener('scroll', onScroll, { passive: true });
         setTimeout(updateScrollButton, 100);
+        // Auto-scroll to bottom after scroll listener is fully set up
+        scrollToBottom();
       }, 400);
 
       setInterval(updateScrollButton, 500);
@@ -1354,6 +1356,7 @@
             }
           });
           renderMessages();
+          scrollToBottom();
         }
       });
     }
