@@ -1207,17 +1207,17 @@
 
     // ─── Scroll-to-bottom ───
     function scrollToBottom() {
-      scrollSentinelIntoView();
+      requestAnimationFrame(scrollSentinelIntoView);
     }
 
     function forceScrollToBottom() {
-      scrollSentinelIntoView();
+      requestAnimationFrame(scrollSentinelIntoView);
       let tries = 0;
       const interval = setInterval(() => {
-        scrollSentinelIntoView();
+        requestAnimationFrame(scrollSentinelIntoView);
         tries++;
         if (tries >= 5) clearInterval(interval);
-      }, 100);
+      }, 200);
     }
 
     function scrollSentinelIntoView() {
@@ -1295,7 +1295,7 @@
         window.addEventListener('scroll', onScroll, { passive: true });
         setTimeout(updateScrollButton, 100);
         // Auto-scroll to bottom after scroll listener is fully set up
-        scrollToBottom();
+        forceScrollToBottom();
       }, 400);
 
       setInterval(updateScrollButton, 500);
@@ -1331,14 +1331,14 @@
           state.messages = res.messages;
           state.hasMore = res.hasMore;
           renderMessages();
-          scrollToBottom();
+          forceScrollToBottom();
           setupScrollListener();
           loadReadReceipts();
         }
       });
     } else {
       renderMessages();
-      scrollToBottom();
+      forceScrollToBottom();
       setupScrollListener();
       loadReadReceipts();
     }
@@ -1356,7 +1356,7 @@
             }
           });
           renderMessages();
-          scrollToBottom();
+          forceScrollToBottom();
         }
       });
     }
@@ -1712,7 +1712,7 @@
           state.messages = res.messages;
           state.hasMore = res.hasMore;
           renderMessages();
-          scrollToBottom();
+          forceScrollToBottom();
           loadReadReceipts();
         }
       });
